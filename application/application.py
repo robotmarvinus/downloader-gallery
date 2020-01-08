@@ -14,7 +14,7 @@ class Application(Gtk.Application):
     title   = "Downloader gallery"
     icon    = "/usr/share/icons/downloader-gallery.png"
     prog_id = "Aurelia.Downloader-gallery"
-    version = "1.1.3"
+    version = "1.1.5"
 
     def __init__(self):
         Gtk.Application.__init__(self, application_id=self.prog_id)

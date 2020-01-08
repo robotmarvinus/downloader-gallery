@@ -194,8 +194,6 @@ class Sender(threading.Thread):
                 application.event_print("...Готово", "+")
                 application.event_info()
 
-            break
-
             data    = application.database.select("send")
             gallery = data[0]
             title   = data[1]

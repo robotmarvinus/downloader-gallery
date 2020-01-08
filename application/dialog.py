@@ -2,6 +2,7 @@ import gi
 gi.require_version("Gtk", "3.0")
 from gi.repository import Gtk, Gdk
 
+import os
 import subprocess
 
 from application.button import *
@@ -43,8 +44,8 @@ class DialogContent(Gtk.VBox):
         self.yandex_token = self.create_yandex_entry("Яндекс токен", application.data.yandex_token)
         self.yandex_collection = self.create_yandex_entry("Яндекс коллекция: ", application.data.yandex_collection)
 
-        self.label_config = self.create_label("Каталог настроек: ", application.data.pathconf[:application.data.pathconf.rindex("/")])
-        self.label_preview = self.create_label("Каталог превью: ", application.data.pathview)
+        self.create_config("Каталог настроек: ", application.data.pathconf[:application.data.pathconf.rindex("/")])
+        self.create_preview("Каталог превью: ", application.data.pathview)
 
         self.entry_data = self.create_entry(application, "Каталог базы данных: ", application.data.pathdata)
         self.entry_load = self.create_entry(application, "Каталог загрузки: ", application.data.pathimgs)
@@ -100,21 +101,31 @@ class DialogContent(Gtk.VBox):
         box.pack_start(entry, True, True, 0)
         return entry
 
-    def create_label(self, title, value=None):
-        box     = self.create_box(title)
-        label   = Gtk.Label()
-        label.set_xalign(0.0)
-        label.set_margin_left(20)
-
-        if value:
-            label.set_text(value)
-
-        box.pack_start(label, True, True, 0)
+    def create_config(self, title, value):
+        box     = self.create_label(title, value)
 
         button  = Button("folder-open-symbolic", box, 0, 0, 0, 0, width=100)
         button.connect("clicked", self.action_open, value)
 
-        return label
+    def create_preview(self, title, value):
+        box     = self.create_label(title, value)
+
+        button  = Button("folder-open-symbolic", box, 0, 0, 0, 0, width=50)
+        button.connect("clicked", self.action_open, value)
+
+        button  = Button("edit-delete-symbolic", box, 0, 0, 0, 0, width=50)
+        button.connect("clicked", self.action_delete, value)
+
+    def create_label(self, title, value):
+        box     = self.create_box(title)
+        label   = Gtk.Label()
+        label.set_xalign(0.0)
+        label.set_margin_left(20)
+        label.set_text(value)
+
+        box.pack_start(label, True, True, 0)
+
+        return box
 
     def create_entry(self, application, title, value=None):
         box     = self.create_box(title)
@@ -180,6 +191,9 @@ class DialogContent(Gtk.VBox):
 
     def action_save(self, button, application):
         application.dialog.save_data(application)
+
+    def action_delete(self, button, value):
+        os.system(f"rm -rf {value}")
 
     def dialog_close(self, dialog):
         dialog.destroy()

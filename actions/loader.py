@@ -62,8 +62,6 @@ class Loader(threading.Thread):
                     application.event_print("...Готово", "+")
                     application.event_info()
 
-                break
-
                 data    = application.database.select("load")
                 gallery = data[0]
                 title   = data[1]
