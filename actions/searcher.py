@@ -8,17 +8,22 @@ class Searcher(threading.Thread):
         self.event   = threading.Event()
 
     def search(self, application):
-        data    = application.database.select("search")
-        gallery = data[0]
-        title   = data[1]
-        site    = data[2]
-        name    = data[3]
-
         application.event_print("Поиск изображений: ")
+        
+        data    = application.database.select("search")
+        gallery = None
+        title   = None
+        site    = None
+        name    = None
 
         while data:
             if not self.event.is_set():
                 break
+
+            gallery = data[0]
+            title   = data[1]
+            site    = data[2]
+            name    = data[3]
 
             if site == "theomegaproject.org":
                 url = "https://www.theomegaproject.org/" + gallery
@@ -35,10 +40,6 @@ class Searcher(threading.Thread):
                         application.event_info()
 
             data    = application.database.select("search")
-            gallery = data[0]
-            title   = data[1]
-            site    = data[2]
-            name    = data[3]
 
         if not self.event.is_set():
             application.event_print("Поиск изображений остановлен...")

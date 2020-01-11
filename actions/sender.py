@@ -138,36 +138,45 @@ class Sender(threading.Thread):
         application.window.content.console.print_text("Отправка: старт...")
 
         data    = application.database.select("send")
-        gallery = data[0]
-        title   = data[1]
-        site    = data[2]
-        name    = data[3]
-        images  = data[5].split(" ")
-        tags    = data[6]
-        status  = data[7]
+        gallery = None
+        title   = None
+        site    = None
+        name    = None
+        images  = None
+        tags    = None
+        status  = None        
         index   = 0
-        i = 0.0
+        i       = 0.0
 
         while data:
-            if not self.event.is_set() or not images:
+            if not self.event.is_set():
                 break
+
+            gallery = data[0]
+            title   = data[1]
+            site    = data[2]
+            name    = data[3]
+            images  = data[5].split(" ")
+            tags    = data[6]
+            status  = data[7]
+            index   = 0
+            i       = 0.0
 
             if not tags:
                 tags  = self.tags
 
-            i = 0.0
             step  = round(1.0/len(images), 3)
 
             application.event_print("Отправка: галлерея " + name + ", " + gallery)
             application.event_progress(i)
 
             for image in images:
-                if not self.event.is_set():
-                    break
-
                 if image:
                     about  = title + " [" + str(index)+ "]\nModel: " + name + "\n" + tags
                     result = self.create_card(image, about)
+                    
+                    print("result", result)
+
                     if result == "Error":
                         application.event_print("Отправка: ошибка при создании карточки (" + result[1] + ")...")
                         break
@@ -195,13 +204,6 @@ class Sender(threading.Thread):
                 application.event_info()
 
             data    = application.database.select("send")
-            gallery = data[0]
-            title   = data[1]
-            site    = data[2]
-            name    = data[3]
-            images  = data[5].split(" ")
-            status  = data[7]
-            index   = 0
 
         if not self.event.is_set():
             application.window.content.console.print_text("Отправка: остановлена...")

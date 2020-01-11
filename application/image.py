@@ -5,6 +5,8 @@ gi.require_version("GLib", "2.0")
 gi.require_version("GdkPixbuf", "2.0")
 from gi.repository import Gio, Gtk, GLib, GdkPixbuf
 
+import threading
+
 from actions.parser import *
 
 class Image(Gtk.EventBox):
@@ -67,12 +69,10 @@ class Image(Gtk.EventBox):
                     application.data.records_search  = application.data.records_search + 1
 
         application.window.content.info.update(application)
+
         self.update(application)
 
-    def update(self, application, data=None):
-        if not data:
-            data = application.database.select("unknown")
-
+    def set_image(self, event, application, data):
         self.gallery = data[0]
         self.site    = data[2]
         self.name    = data[3]
@@ -81,3 +81,10 @@ class Image(Gtk.EventBox):
         result = self.get_pixbuf(application)
         if result != "Error":
             self.image.set_from_pixbuf(result)
+        
+        event.set()
+        
+    def update(self, application):
+        data   = application.database.select("unknown")
+        update = threading.Thread(target=application.event_pixbuf, args=(self, data))
+        update.start()

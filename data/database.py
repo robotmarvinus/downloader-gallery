@@ -37,8 +37,13 @@ class Database():
             cursor.execute(query)
             connection.commit()
 
+            query      = "CREATE TABLE `sites` (`site` TEXT, `status` TEXT)"
+            cursor.execute(query)
+            connection.commit()
+
             query      = "INSERT INTO 'config' ('load', 'send', 'token', 'collection') VALUES (?,?,?,?)"
-            cursor.execute(query, ("y", "y", self.application.config.yandex_token, self.application.config.yandex_collection,))
+            cursor.execute(query, ("y", "y", self.application.data.yandex_token, self.application.data.yandex_collection,))
+            connection.commit()
 
             connection.close()
 
@@ -58,6 +63,21 @@ class Database():
 
             return None
             
+        except Exception as e:
+            self.application.window.content.console.print_text("Ошибка базы данных: insert() " + str(e))
+            return "Error"
+
+    def insert_site(self, value):
+        try:
+            connection = sqlite3.connect(self.path)
+            cursor     = connection.cursor()
+            query      = "INSERT INTO 'sites' ('site', 'status') VALUES (?,?)"
+
+            cursor.execute(query, (value, "n",))
+            connection.commit()
+
+            connection.close()
+
         except Exception as e:
             self.application.window.content.console.print_text("Ошибка базы данных: insert() " + str(e))
             return "Error"
@@ -130,9 +150,12 @@ class Database():
                 query  = "SELECT * FROM 'config'"
                 cursor.execute(query)
                 result = cursor.fetchone()
+            elif value == "sites":
+                query  = "SELECT * FROM 'sites'"
+                cursor.execute(query)
+                result = cursor.fetchall()
 
             connection.close()
-
             return result
 
         except Exception as e: 
@@ -181,8 +204,8 @@ class Database():
         try:
             connection = sqlite3.connect(self.path)
             cursor     = connection.cursor()
-
-            query  = "UPDATE 'config' SET load=?, send=?, token=?, collection=? WHERE rowid == 1"
+            
+            query      = "UPDATE 'config' SET load=?, send=?, token=?, collection=? WHERE rowid == 1"
             cursor.execute(query, [load, send, token, collection])
 
             connection.commit()
@@ -191,3 +214,18 @@ class Database():
         except Exception as e: 
             self.application.window.content.console.print_text("Ошибка базы данных: update() " + str(e))
             return None
+
+    def update_site(self, value):
+        try:
+            connection = sqlite3.connect(self.path)
+            cursor     = connection.cursor()
+
+            query      = "UPDATE 'sites' SET status=? WHERE site=?"
+            cursor.execute(query, ("y", value,))
+
+            connection.commit()
+            connection.close()
+
+        except Exception as e:
+            self.application.window.content.console.print_text("Ошибка базы данных: update_site() " + str(e))
+            return "Error"

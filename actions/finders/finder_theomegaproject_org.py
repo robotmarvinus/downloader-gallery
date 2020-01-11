@@ -53,6 +53,9 @@ def get_navpage_data(application, finder, parser, num, page):
                 application.data.records_main = application.data.records_main + 1
 
                 application.event_info()
+        elif finder.status == True:
+            return "Stop"
+
         application.event_progress(i)                
     application.event_print("Страница: " + str(num), "\r")
 
@@ -80,12 +83,10 @@ def start_find_galleries(application, finder):
             if finder.event.is_set() == False:
                 break
 
-            application.event_print("Страница: " + str(num), "\r")
-
             parser = get_parser(application, page)
             if parser:
                 result = get_navpage_data(application, finder, parser, str(num), page)
-                if result == "Error":
+                if result == "Error" or result == "Stop":
                     break
 
                 page = get_navpage_next(parser)

@@ -22,9 +22,13 @@ class Data():
         self.records_ok     = None
         self.records_no     = 0
 
-        self.data_load()
+        self.sites = [
+            ["theomegaproject.org", None]
+        ]
 
-    def data_load(self):
+        self.load_config()
+
+    def load_config(self):
         if os.path.exists(self.pathconf):
             fopen = open(self.pathconf, "r")
             array = fopen.read().split("\n")
@@ -40,7 +44,7 @@ class Data():
             fopen = open(self.pathconf, "w+")
             fopen.close()
 
-    def data_load_db(self, database):
+    def load_db_config(self, database):
         result = database.select("config")
         if result:
             if result[0] == "y":
@@ -56,7 +60,24 @@ class Data():
             self.yandex_token = result[2]
             self.yandex_collection = result[3]
 
-    def data_load_records(self, database):
+    def load_db_sites(self, database):
+        find  = False
+        sites = database.select("sites")
+        for item in self.sites:
+            find  = False
+            for it in sites:
+                if item[0] == it[0]:
+                    if it[1] == "n":
+                        item[1] = False
+                    elif it[1] == "y":
+                        item[1] = True
+                    find = True
+
+            if find == False:
+                database.insert_site(item[0])
+                item[1] = False
+
+    def load_db_records(self, database):
         data = database.count()
         if data:
             self.records_all    = data[0]
@@ -65,6 +86,11 @@ class Data():
             self.records_load   = data[3]
             self.records_send   = data[4]
             self.records_ok     = data[5]
+
+    def get_site_status(self, value):
+        for item in self.sites:
+            if item[0] == value:
+                return item[1]
 
     def data_save(self, load, send, yandex_token, yandex_collection, path_one, path_two):
         try:

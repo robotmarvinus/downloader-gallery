@@ -14,7 +14,7 @@ class Application(Gtk.Application):
     title   = "Downloader gallery"
     icon    = "/usr/share/icons/downloader-gallery.png"
     prog_id = "Aurelia.Downloader-gallery"
-    version = "1.1.5"
+    version = "1.1.8"
 
     def __init__(self):
         Gtk.Application.__init__(self, application_id=self.prog_id)
@@ -41,8 +41,9 @@ class Application(Gtk.Application):
             if not self.data.pathdata or not self.data.pathimgs:
                 self.open_dialog()
 
-            self.data.data_load_db(self.database)
-            self.data.data_load_records(self.database)
+            self.data.load_db_config(self.database)
+            self.data.load_db_sites(self.database)
+            self.data.load_db_records(self.database)
 
             self.dialog.set_data(self.data)
             self.window.content.control.set_data(self.data)
@@ -81,6 +82,15 @@ class Application(Gtk.Application):
             GLib.idle_add(self.window.content.control.load_end, event, self)
         elif value == "send":
             GLib.idle_add(self.window.content.control.send_end, event, self)
+
+    def event_pixbuf(self, image, data):
+        event = threading.Event()
+        GLib.idle_add(image.set_image, event, self, data)
+        event.wait()
+
+    def event_buttons_status(self, value):
+        event = threading.Event()
+        GLib.idle_add(self.window.content.control.set_buttons_status, event, value)
 
     def open_dialog(self):
         self.dialog.show_all()

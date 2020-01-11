@@ -21,10 +21,7 @@ class Gallery(Gtk.Grid):
                 self.attach(image, x, y, 1, 1)
 
     def set_images(self, application):
-        application.window.content.control.button_find.set_sensitive(False)
-        application.window.content.control.button_search.set_sensitive(False)
-        application.window.content.control.button_load.set_sensitive(False)
-        application.window.content.control.button_send.set_sensitive(False)
+        application.event_buttons_status(False)
 
         data = application.database.select("unknowns")
         if data:
@@ -37,13 +34,11 @@ class Gallery(Gtk.Grid):
                     if l < m and i == l:
                         break
 
-                    self.get_child_at(x, y).update(application, data[i])
+                    application.event_pixbuf(self.get_child_at(x, y), data[i])
+
                     i = i + 1
 
-        application.window.content.control.button_find.set_sensitive(True)
-        application.window.content.control.button_search.set_sensitive(True)        
-        application.window.content.control.button_load.set_sensitive(True)
-        application.window.content.control.button_send.set_sensitive(True)
+        application.event_buttons_status(True)
                
     def update(self, application):
         update = threading.Thread(target=self.set_images, args=(application,))
