@@ -124,7 +124,7 @@ def start_search_images(application, searcher, url, gallery, title, name):
                     index = index + 1
                     page  = "https://www.theomegaproject.org" + item.find("a").attrs['href']
                     image = get_parser(application, page).find("a").find("img").attrs['src']
-                    path  = application.config.pathimgs + '/' + name
+                    path  = application.data.pathimgs + '/' + name
                     filename = image[image.rindex("/"):]
 
                     if image:
