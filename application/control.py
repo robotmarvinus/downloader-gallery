@@ -202,16 +202,16 @@ class Control(Gtk.HBox):
         self.progress.set_fraction(value)
         event.set()
 
-    def set_data(self, data):
-        if data.load == False:
-            self.button_load.set_visible(False)
-        elif data.load == True:
-            self.button_load.set_visible(True)
-
-        if data.send == False:
-            self.button_send.set_visible(False)
-        elif data.load == True:
-            self.button_load.set_visible(True)
-
     def action_open(self, button, application):
         subprocess.Popen(["xdg-open", application.data.pathimgs])
+
+    def update(self, application):
+        if application.data.load == False:
+            self.button_load.set_visible(False)
+        elif application.data.load == True:
+            self.button_load.set_visible(True)
+
+        if application.data.send == False:
+            self.button_send.set_visible(False)
+        elif application.data.load == True:
+            self.button_load.set_visible(True)

@@ -21,7 +21,7 @@ class Loader(threading.Thread):
         i       = 0.0
 
         while data:
-            if not self.event.is_set() or not images:
+            if not self.event.is_set():
                 break
 
             gallery = data[0]
@@ -33,6 +33,10 @@ class Loader(threading.Thread):
             index   = 0
             i       = 0.0
 
+            if not images:
+                application.event_print("Загрузка: очередь изображений пуста (" + gallery + ")...")
+                break
+            
             i = 0.0
             step = round(1.0/len(images), 3)
 
@@ -71,6 +75,12 @@ class Loader(threading.Thread):
                 application.event_info()
 
             data    = application.database.select("load")
+            gallery = None
+            title   = None
+            site    = None
+            name    = None
+            images  = None
+            status  = None
 
         if not self.event.is_set():
             application.event_print("Загрузка остановлена...")

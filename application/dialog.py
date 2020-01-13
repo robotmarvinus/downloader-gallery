@@ -255,17 +255,17 @@ class Dialog(Gtk.Window):
                 if self.header.button.get_sensitive() == False:
                     self.header.button.set_sensitive(True)
 
-                application.window.content.control.set_data(application.data)
+                application.window.content.control.update(application)
 
                 self.content.message.set_text("Настройки сохранены...")
             else:
                 self.content.message.set_text("Ошибка при сохранении настроек...")
 
-    def set_data(self, data):
-        self.content.check_load.set_active(data.load)
-        self.content.check_send.set_active(data.send)
-        self.content.yandex_token.set_text(data.yandex_token)
-        self.content.yandex_collection.set_text(data.yandex_collection)
+    def update(self, application):
+        self.content.check_load.set_active(application.data.load)
+        self.content.check_send.set_active(application.data.send)
+        self.content.yandex_token.set_text(application.data.yandex_token)
+        self.content.yandex_collection.set_text(application.data.yandex_collection)
 
     def dialog_close(self):
         if self.header.button.get_sensitive():

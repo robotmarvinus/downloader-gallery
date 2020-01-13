@@ -2,8 +2,8 @@ import gi
 gi.require_version("Gtk", "3.0")
 from gi.repository import Gtk, GLib
 
-from data.database import *
 from data.data import *
+from data.database import *
 
 from actions.searcher import *
 
@@ -14,7 +14,7 @@ class Application(Gtk.Application):
     title   = "Downloader gallery"
     icon    = "/usr/share/icons/downloader-gallery.png"
     prog_id = "Aurelia.Downloader-gallery"
-    version = "1.1.8"
+    version = "1.1.10"
 
     def __init__(self):
         Gtk.Application.__init__(self, application_id=self.prog_id)
@@ -45,11 +45,8 @@ class Application(Gtk.Application):
             self.data.load_db_sites(self.database)
             self.data.load_db_records(self.database)
 
-            self.dialog.set_data(self.data)
-            self.window.content.control.set_data(self.data)
-
-            self.window.content.gallery.update(self)
-            self.window.content.info.update(self)
+            self.dialog.update(self)
+            self.window.update(self)
 
     def event_print(self, text, line=None):
         event = threading.Event()

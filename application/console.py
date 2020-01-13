@@ -5,7 +5,7 @@ gi.require_version("GLib", "2.0")
 gi.require_version("GdkPixbuf", "2.0")
 from gi.repository import Gio, Gtk, Gdk, GLib, GdkPixbuf
 
-class Console(Gtk.HBox):#HBox):
+class Console(Gtk.HBox):
     def __init__(self):
         Gtk.HBox.__init__(self)
         self.modify_bg (Gtk.StateType.NORMAL, Gdk.Color (0, 0, 0))

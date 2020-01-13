@@ -24,8 +24,6 @@ class Sender(threading.Thread):
         response = requests.get(request_url, headers=request_headers)
         count    = response.json()['count']
 
-        print("Всего коллекций", count)
-
         return count
 
     def get_collections(self):
@@ -165,18 +163,23 @@ class Sender(threading.Thread):
             if not tags:
                 tags  = self.tags
 
+            if not images:
+                application.event_print("Отправка: очередь изображений пуста (" + gallery + ")...")
+                break
+
             step  = round(1.0/len(images), 3)
 
             application.event_print("Отправка: галлерея " + name + ", " + gallery)
             application.event_progress(i)
 
             for image in images:
+                if not self.event.is_set():
+                    break
+
                 if image:
                     about  = title + " [" + str(index)+ "]\nModel: " + name + "\n" + tags
                     result = self.create_card(image, about)
                     
-                    print("result", result)
-
                     if result == "Error":
                         application.event_print("Отправка: ошибка при создании карточки (" + result[1] + ")...")
                         break
@@ -204,6 +207,13 @@ class Sender(threading.Thread):
                 application.event_info()
 
             data    = application.database.select("send")
+            gallery = None
+            title   = None
+            site    = None
+            name    = None
+            images  = None
+            tags    = None
+            status  = None
 
         if not self.event.is_set():
             application.window.content.console.print_text("Отправка: остановлена...")
