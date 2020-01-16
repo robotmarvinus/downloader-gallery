@@ -14,7 +14,7 @@ class Application(Gtk.Application):
     title   = "Downloader gallery"
     icon    = "/usr/share/icons/downloader-gallery.png"
     prog_id = "Aurelia.Downloader-gallery"
-    version = "1.1.10"
+    version = "1.1.11"
 
     def __init__(self):
         Gtk.Application.__init__(self, application_id=self.prog_id)
@@ -38,15 +38,16 @@ class Application(Gtk.Application):
             self.window   = Window(self)
             self.dialog   = Dialog(self)
 
+            self.window.header.update(self)
+
             if not self.data.pathdata or not self.data.pathimgs:
                 self.open_dialog()
+            else:
+                self.data.load_db_config(self.database)
+                self.data.load_db_sites(self.database)
+                self.data.load_db_records(self.database)
 
-            self.data.load_db_config(self.database)
-            self.data.load_db_sites(self.database)
-            self.data.load_db_records(self.database)
-
-            self.dialog.update(self)
-            self.window.update(self)
+                self.window.content.update(self)
 
     def event_print(self, text, line=None):
         event = threading.Event()

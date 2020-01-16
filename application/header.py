@@ -22,6 +22,8 @@ class Header(Gtk.HeaderBar):
         button.connect("clicked", self.action_open, application)
         self.pack_end(button)
 
+        self.show_all()
+        
     def action_open(self, widget, application):
         application.open_dialog()
 

@@ -175,7 +175,7 @@ class DialogContent(Gtk.VBox):
         dialog.set_transient_for(application.dialog)
         dialog.add_buttons(Gtk.STOCK_CANCEL, Gtk.ResponseType.CANCEL, Gtk.STOCK_OPEN, Gtk.ResponseType.OK)
         dialog.set_action(Gtk.FileChooserAction.SELECT_FOLDER)
-        dialog.set_current_folder(application.config.pathhome)
+        dialog.set_current_folder(application.data.pathhome)
         dialog.set_title("Select folder")
 
         dialog.connect("close", self.dialog_close)
@@ -217,6 +217,8 @@ class Dialog(Gtk.Window):
         self.set_titlebar(self.header)
         self.add(self.content)
 
+        self.update(application)
+
     def on_key_release(self, widget, event, application):
         if event.keyval == Gdk.KEY_Escape:
             if self.child_run == True:
@@ -248,18 +250,30 @@ class Dialog(Gtk.Window):
             and application.data.pathimgs == path_two:
             self.content.message.set_text("Настройки не изменялись...")
         else:
-            if application.data.data_save(load, send, yandex_token, yandex_collection, path_one, path_two) != "Error":
-                application.database.set_path(application.data.pathdata)
-                application.database.upgrade()
+            if not application.data.pathdata or not application.data.pathimgs:
+                if application.data.data_save(load, send, yandex_token, yandex_collection, path_one, path_two) != "Error":
+                    if self.header.button.get_sensitive() == False:
+                        self.header.button.set_sensitive(True)
 
-                if self.header.button.get_sensitive() == False:
-                    self.header.button.set_sensitive(True)
+                    application.database.set_path(application.data.pathdata)
+                    application.database.update_config()
 
-                application.window.content.control.update(application)
+                    application.data.load_db_config(application.database)
+                    application.data.load_db_sites(application.database)
+                    application.data.load_db_records(application.database)
 
-                self.content.message.set_text("Настройки сохранены...")
+                    application.window.content.update(application)
+
+                    self.content.message.set_text("Настройки сохранены...")
+                else:
+                    self.content.message.set_text("Ошибка при сохранении настроек...")                    
             else:
-                self.content.message.set_text("Ошибка при сохранении настроек...")
+                if application.data.data_save(load, send, yandex_token, yandex_collection, path_one, path_two) != "Error":
+                    if self.header.button.get_sensitive() == False:
+                        self.header.button.set_sensitive(True)
+                    self.content.message.set_text("Настройки сохранены...")
+                else:
+                    self.content.message.set_text("Ошибка при сохранении настроек...")
 
     def update(self, application):
         self.content.check_load.set_active(application.data.load)

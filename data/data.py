@@ -62,20 +62,21 @@ class Data():
 
     def load_db_sites(self, database):
         find  = False
-        sites = database.select("sites")
-        for item in self.sites:
-            find  = False
-            for it in sites:
-                if item[0] == it[0]:
-                    if it[1] == "n":
-                        item[1] = False
-                    elif it[1] == "y":
-                        item[1] = True
-                    find = True
+        result = database.select("sites")
+        if result:        
+            for item in self.sites:
+                find  = False
+                for it in result:
+                    if item[0] == it[0]:
+                        if it[1] == "n":
+                            item[1] = False
+                        elif it[1] == "y":
+                            item[1] = True
+                        find = True
 
-            if find == False:
-                database.insert_site(item[0])
-                item[1] = False
+                if find == False:
+                    database.insert_site(item[0])
+                    item[1] = False
 
     def load_db_records(self, database):
         data = database.count()

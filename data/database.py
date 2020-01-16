@@ -187,7 +187,7 @@ class Database():
             self.application.window.content.console.print_text("Ошибка базы данных: update() " + str(e))
             return "Error"
 
-    def upgrade(self):
+    def update_config(self):
         if self.application.data.load == True:
             load       = "y"
         elif self.application.data.load == False:

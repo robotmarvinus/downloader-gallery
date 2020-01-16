@@ -2,8 +2,6 @@ import gi
 gi.require_version("Gtk", "3.0")
 from gi.repository import Gtk
 
-
-
 from application.header import *
 from application.content import *
 
@@ -25,12 +23,8 @@ class Window(Gtk.ApplicationWindow):
         self.set_titlebar(self.header)
         self.add(self.content)
 
-    def update(self, application):
-        self.header.update(application)
-        self.content.update(application)
-
         self.show_all()
-       
+
     def set_minimize(self, widget):
         self.iconify()
 
