@@ -65,7 +65,10 @@ def get_parser(application, url):
         return None
 
 def find_image(url):
-    response = requests.head(url)
+    try:
+        response = requests.head(url)
+    except:
+        return False
 
     if response.headers and response.headers['Content-Type'][:5] == "image":
         return True

@@ -133,7 +133,7 @@ class Sender(threading.Thread):
             None
 
     def send(self, application):
-        application.window.content.console.print_text("Отправка: старт...")
+        application.window.content.console.print_text("Отправка: старт...\n")
 
         data    = application.database.select("send")
         gallery = None
@@ -169,7 +169,6 @@ class Sender(threading.Thread):
 
             step  = round(1.0/len(images), 3)
 
-            application.event_print("Отправка: галлерея " + name + ", " + gallery)
             application.event_progress(i)
 
             for image in images:

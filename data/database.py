@@ -48,15 +48,16 @@ class Database():
             connection.close()
 
         except Exception as e:            
-            self.application.window.content.console.print_text("Ошибка базы данных: create() " + str(e))
-
-    def insert(self, gallery, title, site, name, preview):
+            self.application.event_print("Ошибка базы данных: create() " + str(e))
+            return "Error"
+            
+    def insert(self, gallery, title, site, name, preview, status='unknown'):
         try:
             connection = sqlite3.connect(self.path)
             cursor     = connection.cursor()
             query      = "INSERT INTO 'galleries' ('gallery', 'title', 'site', 'name', 'preview', 'status') VALUES (?,?,?,?,?,?)"
 
-            cursor.execute(query, (gallery, title, site, name, preview, 'unknown',))
+            cursor.execute(query, (gallery, title, site, name, preview, status,))
             connection.commit()
 
             connection.close()
@@ -64,7 +65,7 @@ class Database():
             return None
             
         except Exception as e:
-            self.application.window.content.console.print_text("Ошибка базы данных: insert() " + str(e))
+            self.application.event_print("Ошибка базы данных: insert() " + str(e))
             return "Error"
 
     def insert_site(self, value):
@@ -79,7 +80,7 @@ class Database():
             connection.close()
 
         except Exception as e:
-            self.application.window.content.console.print_text("Ошибка базы данных: insert() " + str(e))
+            self.application.event_print("Ошибка базы данных: insert() " + str(e))
             return "Error"
 
     def count(self):
@@ -110,7 +111,7 @@ class Database():
             return [records_all, records_main, records_search, records_load, records_send, records_ok]
 
         except Exception as e: 
-            self.application.window.content.console.print_text("Ошибка базы данных: count() " + str(e))
+            self.application.event_print("Ошибка базы данных: count() " + str(e))
             return None
 
     def select(self, value, values=None):
@@ -159,7 +160,7 @@ class Database():
             return result
 
         except Exception as e: 
-            self.application.window.content.console.print_text("Ошибка базы данных: select() " + str(e))
+            self.application.event_print("Ошибка базы данных: select() " + str(e))
             return None
 
     def update(self, gallery, site, name, status, images=None, tags=None):
@@ -181,11 +182,11 @@ class Database():
             connection.commit()
             connection.close()
             
-            return True
-
         except Exception as e: 
-            self.application.window.content.console.print_text("Ошибка базы данных: update() " + str(e))
+            self.application.event_print("Ошибка базы данных: update() " + str(e))
             return "Error"
+
+        return None
 
     def update_config(self):
         if self.application.data.load == True:
@@ -212,7 +213,7 @@ class Database():
             connection.close()
             
         except Exception as e: 
-            self.application.window.content.console.print_text("Ошибка базы данных: update() " + str(e))
+            self.application.event_print("Ошибка базы данных: update() " + str(e))
             return None
 
     def update_site(self, value):
@@ -227,5 +228,5 @@ class Database():
             connection.close()
 
         except Exception as e:
-            self.application.window.content.console.print_text("Ошибка базы данных: update_site() " + str(e))
+            self.application.event_print("Ошибка базы данных: update_site() " + str(e))
             return "Error"

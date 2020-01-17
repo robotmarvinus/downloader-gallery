@@ -18,10 +18,9 @@ def get_page(application, searcher, url, gallery, index, name):
         for item in parser.find("h2", {"class": "info"}).find_all("a"):#, text="Full Size Image"):
             link = item.attrs['href']
             if link[-4:] == ".jpg":
-                
                 if link[:2] == "//":
                     link = link[2:]
-                    link = "http://content0.fwwgo.com" + link[link.index("/"):]
+                    link = "https://content0.fwwgo.com" + link[link.index("/"):]
 
                 if not link in links:
                     if re.search(r".*orig_.*\.jpg", link):
@@ -32,10 +31,10 @@ def get_page(application, searcher, url, gallery, index, name):
                         links.append(link)
 
         if find == False:
-            link = parser.find("div", {"class": "postholder"}).find("img", {"id": "big_picture"}).attrs['src']
-            if link[:2] == "//":
-                link = link[2:]
-                link = "http://content0.fwwgo.com" + link[link.index("/"):]
+            base_url = parser.find("div", {"class": "postholder"}).find("img", {"id": "big_picture"}).attrs['src']
+            if base_url[:2] == "//":
+                link = base_url[2:]
+                link = "https://content0.fwwgo.com" + link[link.index("/"):]
 
             if not link in links:
                 if re.search(r".*orig_.*\.jpg", link):
@@ -61,11 +60,18 @@ def get_page(application, searcher, url, gallery, index, name):
             result    = find_image(image)
             if result == True:
                 return image
-            elif result == "Error":
-                application.event_print("Изображение не существует: " + url)
-                return "Error"
+            elif result == False:
+                for i in range(10):
+                    image  = re.sub(r"content.", "content" + str(i), image)
+                    result = find_image(image)
+                    if result == True:
+                        return image
+                    
+                if result == False:
+                    application.event_print("Изображение не найдено: " + image)
+                    return "Error"
         else:
-            application.event_print("Изображение не найдено: " + url)
+            application.event_print("Изображение не найдено: " + image)
             return "Error"
 
 def get_tags(parser):
@@ -76,7 +82,7 @@ def get_tags(parser):
             if tags:
                 tags = tags + ", #" + tag.text.replace(" ", "-")
             else:
-                tags = tag.text.replace(" ", "-")
+                tags = "#" + tag.text.replace(" ", "-")
 
     return tags
 
@@ -97,7 +103,6 @@ def start_search_images(application, searcher, url, gallery, title, name):
                 index  = index + 1
                 page   = "https://www.theomegaproject.org" + item.find("a").attrs['href']
                 image  = get_page(application, searcher, page, gallery, index, name)
-
                 if image != "Error" and image != "Stop":
                     if images and type(images) == str and len(images) > 0:
                         images = images + " " + image
@@ -105,10 +110,6 @@ def start_search_images(application, searcher, url, gallery, title, name):
                         images = image
 
                     application.event_progress(i)
-
-                elif image == "Error":
-                    application.event_print("Ошибка при загрузке галлереи: " + gallery)
-                    return "Error"
 
                 elif image == "Stop":
                     return "Stop"
@@ -141,9 +142,12 @@ def start_search_images(application, searcher, url, gallery, title, name):
                             else:
                                 images = image
                             application.event_print("Найдено: " + name + " - " + title[:25] + "[" + str(index) + "]", "\r")
-
+                        #else:
+                        #    application.event_print("Найдено: "
+                        
                     if not searcher.event.is_set():
                         return "Stop"
+        
         if images:
             return [images, tags]
         else:

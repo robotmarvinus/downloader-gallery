@@ -46,8 +46,13 @@ def get_navpage_data(application, finder, parser, num, page):
 
         i = i + step
 
+        
         if not application.database.select("find", [gallery, "theomegaproject.org", name]):
-            result = application.database.insert(gallery, title, "theomegaproject.org", name, preview)
+            if gallery[:5] == "?pid=":
+                result = application.database.insert(gallery, title, "theomegaproject.org", name, preview, status="no")
+            else:
+                result = application.database.insert(gallery, title, "theomegaproject.org", name, preview)
+
             if result != "Error":
                 application.data.records_all  = application.data.records_all + 1
                 application.data.records_main = application.data.records_main + 1

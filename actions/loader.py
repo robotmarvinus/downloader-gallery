@@ -8,7 +8,7 @@ class Loader(threading.Thread):
         self.event = threading.Event()
 
     def load(self, application):
-        application.event_print("Загрузка: старт...")
+        application.event_print("Загрузка: старт...\n")
 
         data    = application.database.select("load")
         gallery = None
