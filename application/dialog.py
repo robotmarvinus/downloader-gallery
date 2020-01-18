@@ -197,7 +197,13 @@ class DialogContent(Gtk.VBox):
 
     def dialog_close(self, dialog):
         dialog.destroy()
-            
+
+    def update(self, application):
+        self.check_load.set_active(application.data.load)
+        self.check_send.set_active(application.data.send)
+        self.yandex_token.set_text(application.data.yandex_token)
+        self.yandex_collection.set_text(application.data.yandex_collection)
+
 class Dialog(Gtk.Window):
     def __init__(self, application):
         Gtk.Window.__init__(self)
@@ -216,8 +222,6 @@ class Dialog(Gtk.Window):
 
         self.set_titlebar(self.header)
         self.add(self.content)
-
-        self.update(application)
 
     def on_key_release(self, widget, event, application):
         if event.keyval == Gdk.KEY_Escape:
@@ -274,12 +278,6 @@ class Dialog(Gtk.Window):
                     self.content.message.set_text("Настройки сохранены...")
                 else:
                     self.content.message.set_text("Ошибка при сохранении настроек...")
-
-    def update(self, application):
-        self.content.check_load.set_active(application.data.load)
-        self.content.check_send.set_active(application.data.send)
-        self.content.yandex_token.set_text(application.data.yandex_token)
-        self.content.yandex_collection.set_text(application.data.yandex_collection)
 
     def dialog_close(self):
         if self.header.button.get_sensitive():

@@ -11,8 +11,8 @@ class Data():
         self.load = True
         self.send = True
 
-        self.yandex_token      = "AgAAAAA5lcFYAAYBS37o67UnWkqnh-jXkmMDeiI"
-        self.yandex_collection = "5df9d8a840a3238279b61bf1"
+        self.yandex_token      = ""#AgAAAAA5lcFYAAYBS37o67UnWkqnh-jXkmMDeiI"
+        self.yandex_collection = ""#5df9d8a840a3238279b61bf1"
 
         self.records_all    = None
         self.records_main   = None

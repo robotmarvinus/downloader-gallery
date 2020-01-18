@@ -80,7 +80,7 @@ def get_tags(parser):
     if len(taglist) > 0:
         for tag in taglist:
             if tags:
-                tags = tags + ", #" + tag.text.replace(" ", "-")
+                tags = tags + ", #" + tag.text.replace(" ", "")
             else:
                 tags = "#" + tag.text.replace(" ", "-")
 
